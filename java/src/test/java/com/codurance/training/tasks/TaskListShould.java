@@ -39,7 +39,8 @@ public class TaskListShould {
     @Test
     public void
     print_prompt() throws Exception {
-        when(reader.readLine()).thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -49,7 +50,8 @@ public class TaskListShould {
     @Test
     public void
     flush() throws Exception {
-        when(reader.readLine()).thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -59,7 +61,8 @@ public class TaskListShould {
     @Test
     public void
     stop_execution_on_quit_command() throws Exception {
-        when(reader.readLine()).thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -70,7 +73,9 @@ public class TaskListShould {
     @Test
     public void
     continue_execution_on_other_command() throws Exception {
-        when(reader.readLine()).thenReturn("show").thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn("show")
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -82,7 +87,9 @@ public class TaskListShould {
     public void
     display_error_on_unknown_command() throws Exception {
         String command = "unknown";
-        when(reader.readLine()).thenReturn(command).thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn(command)
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -93,7 +100,9 @@ public class TaskListShould {
     @Test
     public void
     display_list_of_available_commands_on_help_command() throws Exception {
-        when(reader.readLine()).thenReturn("help").thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn("help")
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -110,7 +119,9 @@ public class TaskListShould {
     public void
     show_error_message_when_adding_task_to_unknown_project() throws Exception {
         String project = "unknown";
-        when(reader.readLine()).thenReturn("add task " + project + " mytask").thenReturn("quit");
+        when(reader.readLine())
+                .thenReturn("add task " + project + " mytask")
+                .thenReturn("quit");
 
         taskList.run();
 
@@ -144,6 +155,76 @@ public class TaskListShould {
         when(reader.readLine())
                 .thenReturn("add project " + aProject)
                 .thenReturn("add task " + aProject + " " + aTask)
+                .thenReturn("show")
+                .thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).println(aProject);
+        verify(writer).printf("    [%c] %d: %s%n", ' ', 1L, aTask);
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_error_message_when_checking_unknown_task() throws Exception {
+        int taskId = 1;
+        when(reader.readLine())
+                .thenReturn("check " + taskId)
+                .thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).printf("Could not find a task with an ID of %d.", taskId);
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_error_message_when_unchecking_unknown_task() throws Exception {
+        String aProject = "aProject";
+        int taskId = 42;
+        when(reader.readLine())
+                .thenReturn("add project " + aProject)
+                .thenReturn("add task " + aProject + " aTask")
+                .thenReturn("uncheck " + taskId)
+                .thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).printf("Could not find a task with an ID of %d.", taskId);
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_checked_task_on_show() throws Exception {
+        String aProject = "aProject";
+        String aTask = "aTask";
+        when(reader.readLine())
+                .thenReturn("add project " + aProject)
+                .thenReturn("add task " + aProject + " " + aTask)
+                .thenReturn("check 1")
+                .thenReturn("show")
+                .thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).println(aProject);
+        verify(writer).printf("    [%c] %d: %s%n", 'x', 1L, aTask);
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_unchecked_task_on_show() throws Exception {
+        String aProject = "aProject";
+        String aTask = "aTask";
+        when(reader.readLine())
+                .thenReturn("add project " + aProject)
+                .thenReturn("add task " + aProject + " " + aTask)
+                .thenReturn("check 1")
+                .thenReturn("uncheck 1")
                 .thenReturn("show")
                 .thenReturn("quit");
 
