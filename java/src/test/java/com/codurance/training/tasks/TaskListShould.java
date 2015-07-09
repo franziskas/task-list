@@ -26,7 +26,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_change_io_exception_in_runtime_exception() throws Exception {
+    change_io_exception_in_runtime_exception() throws Exception {
         final IOException ioException = new IOException();
         doThrow(ioException).when(reader).readLine();
 
@@ -38,7 +38,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_print_prompt() throws Exception {
+    print_prompt() throws Exception {
         when(reader.readLine()).thenReturn("quit");
 
         taskList.run();
@@ -48,7 +48,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_flush() throws Exception {
+    flush() throws Exception {
         when(reader.readLine()).thenReturn("quit");
 
         taskList.run();
@@ -58,7 +58,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_stop_execution_on_quit_command() throws Exception {
+    stop_execution_on_quit_command() throws Exception {
         when(reader.readLine()).thenReturn("quit");
 
         taskList.run();
@@ -69,7 +69,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_continue_execution_on_other_command() throws Exception {
+    continue_execution_on_other_command() throws Exception {
         when(reader.readLine()).thenReturn("show").thenReturn("quit");
 
         taskList.run();
@@ -80,7 +80,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_display_error_on_unknown_command() throws Exception {
+    display_error_on_unknown_command() throws Exception {
         String command = "unknown";
         when(reader.readLine()).thenReturn(command).thenReturn("quit");
 
@@ -92,7 +92,7 @@ public class TaskListShould {
 
     @Test
     public void
-    should_display_list_of_available_commands_on_help_command() throws Exception {
+    display_list_of_available_commands_on_help_command() throws Exception {
         when(reader.readLine()).thenReturn("help").thenReturn("quit");
 
         taskList.run();
@@ -103,6 +103,54 @@ public class TaskListShould {
         verify(writer).println("  add task <project name> <task description>");
         verify(writer).println("  check <task ID>");
         verify(writer).println("  uncheck <task ID>");
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_error_message_when_adding_task_to_unknown_project() throws Exception {
+        String project = "unknown";
+        when(reader.readLine()).thenReturn("add task " + project + " mytask").thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).printf("Could not find a project with the name \"%s\".", project);
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_added_projects_on_show() throws Exception {
+        String aProject = "aProject";
+        String anotherProject = "anotherProject";
+        when(reader.readLine())
+                .thenReturn("add project " + aProject)
+                .thenReturn("add project " + anotherProject)
+                .thenReturn("show")
+                .thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).println(aProject);
+        verify(writer, times(2)).println();
+        verify(writer).println(anotherProject);
+    }
+
+    @Test
+    public void
+    show_added_task_on_show() throws Exception {
+        String aProject = "aProject";
+        String aTask = "aTask";
+        when(reader.readLine())
+                .thenReturn("add project " + aProject)
+                .thenReturn("add task " + aProject + " " + aTask)
+                .thenReturn("show")
+                .thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).println(aProject);
+        verify(writer).printf("    [%c] %d: %s%n", ' ', 1L, aTask);
         verify(writer).println();
     }
 }
