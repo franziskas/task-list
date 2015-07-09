@@ -10,6 +10,10 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class TaskListShould {
     @Rule
@@ -31,4 +35,47 @@ public class TaskListShould {
 
         taskList.run();
     }
+
+    @Test
+    public void
+    should_print_prompt() throws Exception {
+        when(reader.readLine()).thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).print("> ");
+    }
+
+    @Test
+    public void
+    should_flush() throws Exception {
+        when(reader.readLine()).thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).flush();
+    }
+
+    @Test
+    public void
+    should_stop_execution_on_quit_command() throws Exception {
+        when(reader.readLine()).thenReturn("quit");
+
+        taskList.run();
+
+        verify(reader, times(1)).readLine();
+        verifyNoMoreInteractions(reader);
+    }
+
+    @Test
+    public void
+    should_continue_execution_on_other_command() throws Exception {
+        when(reader.readLine()).thenReturn("show").thenReturn("quit");
+
+        taskList.run();
+
+        verify(reader, times(2)).readLine();
+        verifyNoMoreInteractions(reader);
+    }
+
 }
