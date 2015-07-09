@@ -89,4 +89,20 @@ public class TaskListShould {
         verify(writer).printf("I don't know what the command \"%s\" is.", command);
         verify(writer).println();
     }
+
+    @Test
+    public void
+    should_display_list_of_available_commands_on_help_command() throws Exception {
+        when(reader.readLine()).thenReturn("help").thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).println("Commands:");
+        verify(writer).println("  show");
+        verify(writer).println("  add project <project name>");
+        verify(writer).println("  add task <project name> <task description>");
+        verify(writer).println("  check <task ID>");
+        verify(writer).println("  uncheck <task ID>");
+        verify(writer).println();
+    }
 }
