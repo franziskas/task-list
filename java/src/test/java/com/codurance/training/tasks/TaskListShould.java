@@ -78,4 +78,15 @@ public class TaskListShould {
         verifyNoMoreInteractions(reader);
     }
 
+    @Test
+    public void
+    should_display_error_on_unknown_command() throws Exception {
+        String command = "unknown";
+        when(reader.readLine()).thenReturn(command).thenReturn("quit");
+
+        taskList.run();
+
+        verify(writer).printf("I don't know what the command \"%s\" is.", command);
+        verify(writer).println();
+    }
 }
