@@ -27,16 +27,18 @@ public final class ApplicationTest {
     public ApplicationTest() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(new PipedInputStream(inStream)));
         PrintWriter out = new PrintWriter(new PipedOutputStream(outStream), true);
-        TaskList taskList = new TaskList(in, out);
+        TaskList taskList = new TaskList(new TaskListConsole(in, out));
         applicationThread = new Thread(taskList);
     }
 
-    @Before public void
+    @Before
+    public void
     start_the_application() {
         applicationThread.start();
     }
 
-    @After public void
+    @After
+    public void
     kill_the_application() throws IOException, InterruptedException {
         if (applicationThread == null || !applicationThread.isAlive()) {
             return;
@@ -46,7 +48,8 @@ public final class ApplicationTest {
         throw new IllegalStateException("The application is still running.");
     }
 
-    @Test(timeout = 1000) public void
+    @Test(timeout = 1000)
+    public void
     it_works() throws IOException {
         execute("show");
 
@@ -56,10 +59,10 @@ public final class ApplicationTest {
 
         execute("show");
         readLines(
-            "secrets",
-            "    [ ] 1: Eat more donuts.",
-            "    [ ] 2: Destroy all humans.",
-            ""
+                "secrets",
+                "    [ ] 1: Eat more donuts.",
+                "    [ ] 2: Destroy all humans.",
+                ""
         );
 
         execute("add project training");

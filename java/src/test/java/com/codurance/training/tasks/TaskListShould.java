@@ -26,7 +26,7 @@ public class TaskListShould {
     private PrintWriter writer = mock(PrintWriter.class);
     private BufferedReader reader = mock(BufferedReader.class);
 
-    private TaskList taskList = new TaskList(reader, writer);
+    private TaskList taskList = new TaskList(new TaskListConsole(reader, writer));
 
 
     @Test

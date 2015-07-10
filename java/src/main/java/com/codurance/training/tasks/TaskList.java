@@ -1,7 +1,6 @@
 package com.codurance.training.tasks;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -13,33 +12,26 @@ public final class TaskList implements Runnable {
     private static final String QUIT = "quit";
 
     private final Map<String, List<Task>> tasks = new LinkedHashMap<>();
-    private final BufferedReader in;
     private final PrintWriter out;
+    private final TaskListConsole console;
 
     private long lastId = 0;
 
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter out = new PrintWriter(System.out);
-        new TaskList(in, out).run();
+        new TaskList(new TaskListConsole(in, out)).run();
     }
 
-    public TaskList(BufferedReader reader, PrintWriter writer) {
-        this.in = reader;
-        this.out = writer;
+    public TaskList(TaskListConsole taskListConsole) {
+        this.out = taskListConsole.getWriter();
+        this.console = taskListConsole;
     }
 
     public void run() {
         while (true) {
-            out.print("> ");
-            out.flush();
-            String command;
-            try {
-                command = in.readLine();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (command.equals(QUIT)) {
+            String command = console.readCommand();
+            if (command.equals(TaskList.QUIT)) {
                 break;
             }
             execute(command);
