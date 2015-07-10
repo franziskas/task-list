@@ -2,12 +2,16 @@ package com.codurance.training.tasks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -23,6 +27,7 @@ public class TaskListShould {
     private BufferedReader reader = mock(BufferedReader.class);
 
     private TaskList taskList = new TaskList(reader, writer);
+
 
     @Test
     public void
@@ -234,4 +239,33 @@ public class TaskListShould {
         verify(writer).printf("    [%c] %d: %s%n", ' ', 1L, aTask);
         verify(writer).println();
     }
+
+    @Test
+    public void
+    main_uses_system_in_and_out() throws Exception {
+        InputStream inputStream = mockSystemIn();
+        PrintStream outputStream = mockSystemOut();
+
+        try {
+            TaskList.main(null);
+        } catch (RuntimeException e) {
+        }
+
+        verify(outputStream).flush();
+        verify(inputStream).read(any(byte[].class), anyInt(), anyInt());
+    }
+
+    private PrintStream mockSystemOut() {
+        PrintStream outputStream = mock(PrintStream.class);
+        System.setOut(outputStream);
+        return outputStream;
+    }
+
+    private InputStream mockSystemIn() throws IOException {
+        InputStream inputStream = mock(InputStream.class);
+        when(inputStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(0);
+        System.setIn(inputStream);
+        return inputStream;
+    }
+
 }
