@@ -12,7 +12,7 @@ public class ClamCardShould {
     charge_nothing_if_you_enter_and_leave_at_the_same_station() {
         Journey journey = new Journey(Station.ALDGATE, Station.ALDGATE);
 
-        assertThat(journey.cost(), is(new Money(0.0)));
+        assertThat(journey.fare(), is(new Money(0.0)));
     }
 
     @Test
@@ -20,7 +20,7 @@ public class ClamCardShould {
     charge_two_fifty_for_a_one_way_journey_starting_and_ending_in_zone_a() {
         Journey journey = new Journey(Station.ASTERISK, Station.ALDGATE);
 
-        assertThat(journey.cost(), is(new Money(2.50)));
+        assertThat(journey.fare(), is(new Money(2.50)));
     }
 
     @Test
@@ -28,6 +28,15 @@ public class ClamCardShould {
     charge_three_for_a_one_way_journey_starting_and_ending_in_zone_b() {
         Journey journey = new Journey(Station.BARBICAN, Station.BALHAM);
 
-        assertThat(journey.cost(), is(new Money(3.00)));
+        assertThat(journey.fare(), is(new Money(3.00)));
     }
+
+    @Test
+    public void
+    charge_three_for_a_one_way_journey_starting_in_zone_a_and_ending_in_zone_b() {
+        Journey journey = new Journey(Station.ALDGATE, Station.BALHAM);
+
+        assertThat(journey.fare(), is(new Money(3.00)));
+    }
+
 }

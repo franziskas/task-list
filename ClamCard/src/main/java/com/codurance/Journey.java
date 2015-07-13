@@ -9,12 +9,15 @@ public class Journey {
         this.destination = destination;
     }
 
-    public Money cost() {
+    public Money fare() {
         if (source == destination) {
             return new Money(0);
         }
-        if (source.isIn(Zone.B))
+
+        if (source.isIn(Zone.B) || destination.isIn(Zone.B)) {
             return new Money(3.0);
+        }
+
         return new Money(2.5);
     }
 
