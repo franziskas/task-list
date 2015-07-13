@@ -10,15 +10,23 @@ public class Journey {
     }
 
     public Money fare() {
-        if (source == destination) {
+        if (thereIsNoJourney()) {
             return new Money(0);
         }
 
-        if (source.isIn(Zone.B) || destination.isIn(Zone.B)) {
+        if (touchesZoneB()) {
             return new Money(3.0);
         }
 
         return new Money(2.5);
+    }
+
+    private boolean thereIsNoJourney() {
+        return source == destination;
+    }
+
+    private boolean touchesZoneB() {
+        return source.isIn(Zone.B) || destination.isIn(Zone.B);
     }
 
 }
