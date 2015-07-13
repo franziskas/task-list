@@ -4,7 +4,8 @@ public enum Station {
     ALDGATE(Zone.A),
     ASTERISK(Zone.A),
     BARBICAN(Zone.B),
-    BALHAM(Zone.B);
+    BALHAM(Zone.B),
+    ANGEL(Zone.A);
 
     private Zone zone;
 
