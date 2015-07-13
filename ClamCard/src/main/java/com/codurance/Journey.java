@@ -9,10 +9,11 @@ public class Journey {
         this.destination = destination;
     }
 
-    public double getPrice() {
+    public Money cost() {
         if (source == destination) {
-            return 0;
+            return new Money(0);
         }
-        return 2.5;
+        return new Money(2.5);
     }
+
 }
