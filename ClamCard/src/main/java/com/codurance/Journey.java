@@ -3,7 +3,6 @@ package com.codurance;
 public class Journey {
     private final Station source;
     private final Station destination;
-    private double price;
 
     public Journey(Station source, Station destination) {
         this.source = source;
