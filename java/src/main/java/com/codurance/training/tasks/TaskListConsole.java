@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 public class TaskListConsole {
     private final BufferedReader reader;
-    private final PrintWriter writer;
+    public final PrintWriter writer;
 
     public TaskListConsole(BufferedReader reader, PrintWriter writer) {
         this.reader = reader;
@@ -15,10 +15,6 @@ public class TaskListConsole {
 
     public BufferedReader getReader() {
         return reader;
-    }
-
-    public PrintWriter getWriter() {
-        return writer;
     }
 
     private void printPrompt() {
@@ -36,5 +32,14 @@ public class TaskListConsole {
         }
 
         return command;
+    }
+
+    public void printNewLine() {
+        writer.println();
+    }
+
+    public void printError(String message, Object... parameters) {
+        writer.printf(message, parameters);
+        printNewLine();
     }
 }

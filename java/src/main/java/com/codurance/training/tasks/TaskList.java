@@ -12,7 +12,6 @@ public final class TaskList implements Runnable {
     private static final String QUIT = "quit";
 
     private final Map<String, List<Task>> tasks = new LinkedHashMap<>();
-    private final PrintWriter out;
     private final TaskListConsole console;
 
     private long lastId = 0;
@@ -24,7 +23,6 @@ public final class TaskList implements Runnable {
     }
 
     public TaskList(TaskListConsole taskListConsole) {
-        this.out = taskListConsole.getWriter();
         this.console = taskListConsole;
     }
 
@@ -65,12 +63,17 @@ public final class TaskList implements Runnable {
 
     private void show() {
         for (Map.Entry<String, List<Task>> project : tasks.entrySet()) {
-            out.println(project.getKey());
+            String output = project.getKey();
+            print(output);
             for (Task task : project.getValue()) {
-                out.printf("    [%c] %d: %s%n", (task.isDone() ? 'x' : ' '), task.getId(), task.getDescription());
+                console.writer.printf("    [%c] %d: %s%n", (task.isDone() ? 'x' : ' '), task.getId(), task.getDescription());
             }
-            out.println();
+            console.printNewLine();
         }
+    }
+
+    private void print(String output) {
+        console.writer.println(output);
     }
 
     private void add(String commandLine) {
@@ -91,8 +94,7 @@ public final class TaskList implements Runnable {
     private void addTask(String project, String description) {
         List<Task> projectTasks = tasks.get(project);
         if (projectTasks == null) {
-            out.printf("Could not find a project with the name \"%s\".", project);
-            out.println();
+            console.printError("Could not find a project with the name \"%s\".", project);
             return;
         }
         projectTasks.add(new Task(nextId(), description, false));
@@ -116,23 +118,22 @@ public final class TaskList implements Runnable {
                 }
             }
         }
-        out.printf("Could not find a task with an ID of %d.", id);
-        out.println();
+        console.printError("Could not find a task with an ID of %d.", id);
     }
 
     private void help() {
-        out.println("Commands:");
-        out.println("  show");
-        out.println("  add project <project name>");
-        out.println("  add task <project name> <task description>");
-        out.println("  check <task ID>");
-        out.println("  uncheck <task ID>");
-        out.println();
+        print("Commands:");
+        print("  show");
+        print("  add project <project name>");
+        print("  add task <project name> <task description>");
+        print("  check <task ID>");
+        print("  uncheck <task ID>");
+        console.printNewLine();
     }
 
     private void error(String command) {
-        out.printf("I don't know what the command \"%s\" is.", command);
-        out.println();
+        String message = "I don't know what the command \"%s\" is.";
+        console.printError(message, command);
     }
 
     private long nextId() {
