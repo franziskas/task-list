@@ -13,6 +13,8 @@ public class Journey {
         if (source == destination) {
             return new Money(0);
         }
+        if (source.isIn(Zone.B))
+            return new Money(3.0);
         return new Money(2.5);
     }
 

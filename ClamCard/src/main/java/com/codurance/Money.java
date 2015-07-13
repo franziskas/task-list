@@ -19,4 +19,9 @@ public class Money {
     public int hashCode() {
         return reflectionHashCode(this);
     }
+
+    @Override
+    public String toString() {
+        return "Value of money is " + value;
+    }
 }
