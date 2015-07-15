@@ -13,6 +13,7 @@ public class TaskListConsole {
         this.writer = writer;
     }
 
+
     public BufferedReader getReader() {
         return reader;
     }
@@ -41,5 +42,10 @@ public class TaskListConsole {
     public void printError(String message, Object... parameters) {
         writer.printf(message, parameters);
         printNewLine();
+    }
+
+    public void printWithNewLine(String message, char character, long id, Object object) {
+        writer.printf(message, character, id, object);
+        writer.println();
     }
 }

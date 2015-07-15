@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.time.Clock;
+import java.time.Instant;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
@@ -26,8 +29,9 @@ public class TaskListShould {
     private PrintWriter writer = mock(PrintWriter.class);
     private BufferedReader reader = mock(BufferedReader.class);
 
-    private TaskList taskList = new TaskList(new TaskListConsole(reader, writer));
-
+    @Mock
+    private Clock taskListClock = mock(Clock.class);
+    private TaskList taskList = new TaskList(new TaskListConsole(reader, writer), taskListClock);
 
     @Test
     public void
@@ -236,6 +240,29 @@ public class TaskListShould {
         taskList.run();
 
         verify(writer).println(aProject);
+        verify(writer).printf("    [%c] %d: %s%n", ' ', 1L, aTask);
+        verify(writer).println();
+    }
+
+    @Test
+    public void
+    show_tasks_due_today() throws Exception {
+        Instant today = Instant.parse("2020-01-01T00:00:00Z");
+        when(taskListClock.instant()).thenReturn(today);
+        when(taskListClock.getZone()).thenReturn(Clock.systemDefaultZone().getZone());
+        String aProject = "aProject";
+        String aTask = "aTask";
+        when(reader.readLine())
+                .thenReturn("add project " + aProject)
+                .thenReturn("add task " + aProject + " " + aTask)
+                .thenReturn("deadline 1 " + "2020-01-01")
+                .thenReturn("add task " + aProject + "  anotherTask")
+                .thenReturn("deadline 2 " + "2020-01-03")
+                .thenReturn("today")
+                .thenReturn("quit");
+
+        taskList.run();
+
         verify(writer).printf("    [%c] %d: %s%n", ' ', 1L, aTask);
         verify(writer).println();
     }

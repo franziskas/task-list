@@ -3,28 +3,34 @@ package com.codurance.training.tasks;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.time.Clock.systemDefaultZone;
 
 public final class TaskList implements Runnable {
     private static final String QUIT = "quit";
 
     private final Map<String, List<Task>> tasks = new LinkedHashMap<>();
     private final TaskListConsole console;
+    private final Clock clock;
 
     private long lastId = 0;
+
+    public TaskList(TaskListConsole console, Clock clock) {
+        this.console = console;
+        this.clock = clock;
+    }
 
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter out = new PrintWriter(System.out);
-        new TaskList(new TaskListConsole(in, out)).run();
+        new TaskList(new TaskListConsole(in, out), systemDefaultZone()).run();
     }
 
-    public TaskList(TaskListConsole taskListConsole) {
-        this.console = taskListConsole;
-    }
 
     public void run() {
         while (true) {
@@ -54,6 +60,12 @@ public final class TaskList implements Runnable {
                 break;
             case "help":
                 help();
+                break;
+            case "deadline":
+                new DeadlineCommand(commandRest).executeOn(new ProjectsToTasks(tasks));
+                break;
+            case "today":
+                new TodayCommand(clock, console).executeOn(new ProjectsToTasks(tasks));
                 break;
             default:
                 error(command);
