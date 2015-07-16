@@ -46,32 +46,18 @@ public final class TaskList implements Runnable {
         String[] commandRest = commandLine.split(" ", 2);
         String command = commandRest[0];
         ProjectsToTasks projectsToTasks = new ProjectsToTasks(tasks);
-        switch (command) {
-            case "show":
-                new LegacyCommand(this::show).execute();
-                break;
-            case "add":
-                new LegacyCommand(() -> add(commandRest[1])).execute();
-                break;
-            case "check":
-                new LegacyCommand(() -> check(commandRest[1])).execute();
-                break;
-            case "uncheck":
-                new LegacyCommand(() -> uncheck(commandRest[1])).execute();
-                break;
-            case "help":
-                new LegacyCommand(this::help).execute();
-                break;
-            case "deadline":
-                new DeadlineCommand(commandRest).executeOn(projectsToTasks);
-                break;
-            case "today":
-                new TodayCommand(clock, console).executeOn(projectsToTasks);
-                break;
-            default:
-                new LegacyCommand(() -> error(command)).execute();
-                break;
-        }
+        Actions commands = new ActionsBuilder()
+                .withAction("show", this::show)
+                .withAction("add", () -> add(commandRest[1]))
+                .withAction("check", () -> check(commandRest[1]))
+                .withAction("uncheck", () -> uncheck(commandRest[1]))
+                .withAction("help", this::help)
+                .withAction("deadline", () -> new DeadlineCommand(commandRest).executeOn(projectsToTasks))
+                .withAction("today", () -> new TodayCommand(clock, console).executeOn(projectsToTasks))
+                .withDefault(() -> error(command))
+                .build();
+        commands.execute(command);
+
     }
 
     private void show() {
