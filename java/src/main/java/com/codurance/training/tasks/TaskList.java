@@ -48,19 +48,19 @@ public final class TaskList implements Runnable {
         ProjectsToTasks projectsToTasks = new ProjectsToTasks(tasks);
         switch (command) {
             case "show":
-                show();
+                new LegacyCommand(this::show).execute();
                 break;
             case "add":
-                add(commandRest[1]);
+                new LegacyCommand(() -> add(commandRest[1])).execute();
                 break;
             case "check":
-                check(commandRest[1]);
+                new LegacyCommand(() -> check(commandRest[1])).execute();
                 break;
             case "uncheck":
                 new LegacyCommand(() -> uncheck(commandRest[1])).execute();
                 break;
             case "help":
-                help();
+                new LegacyCommand(this::help).execute();
                 break;
             case "deadline":
                 new DeadlineCommand(commandRest).executeOn(projectsToTasks);
@@ -69,7 +69,7 @@ public final class TaskList implements Runnable {
                 new TodayCommand(clock, console).executeOn(projectsToTasks);
                 break;
             default:
-                error(command);
+                new LegacyCommand(() -> error(command)).execute();
                 break;
         }
     }
@@ -101,7 +101,7 @@ public final class TaskList implements Runnable {
     }
 
     private void addProject(String name) {
-        tasks.put(name, new ArrayList<Task>());
+        tasks.put(name, new ArrayList<>());
     }
 
     private void addTask(String project, String description) {
