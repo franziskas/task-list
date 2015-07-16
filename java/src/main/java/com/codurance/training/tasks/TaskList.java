@@ -47,17 +47,16 @@ public final class TaskList implements Runnable {
         String command = commandRest[0];
         ProjectsToTasks projectsToTasks = new ProjectsToTasks(tasks);
         Actions commands = new ActionsBuilder()
-                .withAction("show", this::show)
-                .withAction("add", () -> add(commandRest[1]))
-                .withAction("check", () -> check(commandRest[1]))
-                .withAction("uncheck", () -> uncheck(commandRest[1]))
-                .withAction("help", this::help)
-                .withAction("deadline", () -> new DeadlineCommand(commandRest).executeOn(projectsToTasks))
-                .withAction("today", () -> new TodayCommand(clock, console).executeOn(projectsToTasks))
+                .withAction(new ActionIdentifier("show"), this::show)
+                .withAction(new ActionIdentifier("add"), () -> add(commandRest[1]))
+                .withAction(new ActionIdentifier("check"), () -> check(commandRest[1]))
+                .withAction(new ActionIdentifier("uncheck"), () -> uncheck(commandRest[1]))
+                .withAction(new ActionIdentifier("help"), this::help)
+                .withAction(new ActionIdentifier("deadline"), () -> new DeadlineCommand(commandRest).executeOn(projectsToTasks))
+                .withAction(new ActionIdentifier("today"), () -> new TodayCommand(clock, console).executeOn(projectsToTasks))
                 .withDefault(() -> error(command))
                 .build();
-        commands.execute(command);
-
+        commands.execute(new ActionIdentifier(command));
     }
 
     private void show() {

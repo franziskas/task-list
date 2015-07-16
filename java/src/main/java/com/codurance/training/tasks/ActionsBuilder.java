@@ -5,11 +5,12 @@ import java.util.Map;
 
 public class ActionsBuilder {
 
-    private Map<String, Runnable> actions = new HashMap<>();
-    private Runnable defaultAction = () -> {};
+    private Map<ActionIdentifier, Runnable> actions = new HashMap<>();
+    private Runnable defaultAction = () -> {
+    };
 
-    public ActionsBuilder withAction(String identifier, Runnable action) {
-        actions.put(identifier, action);
+    public ActionsBuilder withAction(ActionIdentifier actionIdentifier, Runnable action) {
+        actions.put(actionIdentifier, action);
         return this;
     }
 

@@ -15,7 +15,7 @@ public class ActionsShould {
                 .withDefault(defaultRunnable)
                 .build();
 
-        actions.execute("unknown");
+        actions.execute(new ActionIdentifier("unknown"));
 
         verify(defaultRunnable).run();
     }
@@ -28,12 +28,12 @@ public class ActionsShould {
         Runnable defaultRunnable = mock(Runnable.class);
         String identifier = "matchingIdentifier";
         Actions actions = new ActionsBuilder()
-                .withAction(identifier, matchingRunnable)
-                .withAction("differentIdentifier", notMatchingRunnable)
+                .withAction(new ActionIdentifier(identifier), matchingRunnable)
+                .withAction(new ActionIdentifier("differentIdentifier"), notMatchingRunnable)
                 .withDefault(defaultRunnable)
                 .build();
 
-        actions.execute(identifier);
+        actions.execute(new ActionIdentifier(identifier));
 
         verify(matchingRunnable).run();
         verifyZeroInteractions(notMatchingRunnable);
