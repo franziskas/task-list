@@ -1,5 +1,6 @@
 package com.codurance.training.tasks;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class ProjectsToTasks {
 
     public void printDueTasks(TaskListConsole console, TaskDate today) {
         tasks.values().stream()
-                .flatMap(allTasks -> allTasks.stream())
+                .flatMap(Collection::stream)
                 .filter(task -> task.isDueAt(today))
                 .forEach(dueTask -> console.printWithNewLine("    [%c] %d: %s%n", ' ', dueTask.getId(), dueTask.getDescription()));
 
