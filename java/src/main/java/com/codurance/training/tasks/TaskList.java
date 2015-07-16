@@ -45,6 +45,7 @@ public final class TaskList implements Runnable {
     private void execute(String commandLine) {
         String[] commandRest = commandLine.split(" ", 2);
         String command = commandRest[0];
+        ProjectsToTasks projectsToTasks = new ProjectsToTasks(tasks);
         switch (command) {
             case "show":
                 show();
@@ -56,16 +57,16 @@ public final class TaskList implements Runnable {
                 check(commandRest[1]);
                 break;
             case "uncheck":
-                uncheck(commandRest[1]);
+                new LegacyCommand(() -> uncheck(commandRest[1])).execute();
                 break;
             case "help":
                 help();
                 break;
             case "deadline":
-                new DeadlineCommand(commandRest).executeOn(new ProjectsToTasks(tasks));
+                new DeadlineCommand(commandRest).executeOn(projectsToTasks);
                 break;
             case "today":
-                new TodayCommand(clock, console).executeOn(new ProjectsToTasks(tasks));
+                new TodayCommand(clock, console).executeOn(projectsToTasks);
                 break;
             default:
                 error(command);
